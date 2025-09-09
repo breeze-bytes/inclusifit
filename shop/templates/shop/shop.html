@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop - InclusiFit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{% url 'home' %}" class="logo">InclusiFit</a>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="shop-container">
+    <h1>Shop InclusiFit Underwear</h1>
+    <div class="product-card">
+      <img src="" alt="Underwear product">
+      <h2>{{ product.name }}</h2>
+      <p class="price">KSh {{ product.price }}</p>
+
+      <form action="{% url 'payment' product.id %}" method="get">
+        <label for="size">Select Size:</label>
+        <select name="size" id="size" required>
+          {% for size in product.sizes.all %}
+          <option value="{{ size.id }}">{{ size.size }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Buy Now</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - INCLUSIFIT</title>
+
+  <!-- SEO Meta -->
+  <meta name="description" content="Welcome to InclusiFit: Where Comfort Meets Inclusivity! Everyone deserves comfort and confidence in their clothing choices. Revolutionize Your Underwear Drawer with InclusiFit!">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Home - INCLUSIFIT">
+  <meta property="og:description" content="Welcome to InclusiFit: Where Comfort Meets Inclusivity!">
+  <meta property="og:image" content="https://inclusifitworld.com/images/PHOTO-2024-04-24-18-17-29-removebg-preview-2.png"> <!-- Changed to absolute URL -->
+  <meta property="og:url" content="https://inclusifitworld.com/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Home - INCLUSIFIT">
+  <meta name="twitter:description" content="Welcome to InclusiFit: Where Comfort Meets Inclusivity!">
+  <meta name="twitter:image" content="https://inclusifitworld.com/images/PHOTO-2024-04-24-18-17-29-removebg-preview-2.png"> <!-- Added missing Twitter tags -->
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <!-- Optional JS -->
+  <script src="{% static 'js/index.js' %}" defer></script>
+  
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header>
+    <nav>
+      <a href="{% url 'home' %}" class="logo">
+        <img src="{% static 'images/cropped-cropped-PHOTO-2024-04-24-18-17-29-removebg-preview.png' %}" alt="InclusiFit Logo - Home">
+      </a>
+      <ul class="menu">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Background Wrapper -->
+  <div class="page-bg">
+
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text-container">
+          <h1>Welcome to InclusiFit: <br> Where Comfort Meets Inclusivity!</h1>
+          <p>Everyone deserves comfort and confidence in their clothing choices. Say goodbye to one-size-fits-all underwear!</p>
+          <a href="#read-more" class="btn-read-more">
+            <span>&rarr; Read More</span>
+          </a>
+        </div>
+        <div class="hero-video-container">
+          <video controls autoplay muted loop playsinline poster="videos/video-poster.jpg">
+            <source src="{% static 'videos/m.mp4' %}" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="feature-intro"> <!-- Changed class from feature1 to feature-intro -->
+        <h2>Great Style For Everyone</h2>
+        <p>Everyone deserves comfort and confidence in their clothing choices</p>
+      </div>
+
+      <div class="feature-highlight"> 
+        <div class="feature-highlight__image">  
+          <img src="{% static 'images/PHOTO-2024-07-01-15-59-09-1.jpg' %}" alt="A person smiling with confidence, wearing comfortable InclusiFit underwear">
+        </div>
+        <div class="feature-highlight__content">
+          <h1>Revolutionize Your Underwear Drawer with InclusiFit!</h1>
+          <p>Explore a heightened sense of comfort and self-assurance with Inclusifit’s customized underwear selections. Designed to cater to unique requirements, InclusiFit empowers you with a bespoke fit crafted just for you.</p>
+          <button aria-label="Learn more about how we revolutionize underwear">Learn More</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Section -->
+    <section class="product-showcase"> 
+      <h1>Experience True Freedom with InclusiFit Underwear!</h1>
+      <div class="product-gallery">
+        <img src="{% static 'images/PHOTO-2024-07-01-15-59-10-2.jpg' %}" alt="InclusiFit underwear product shot, style 1">
+        <img src="{% static 'images/PHOTO-2024-07-01-15-59-09.jpg' %}" alt="InclusiFit underwear product shot, style 2">
+        <img src="{% static 'images/PHOTO-2024-07-01-15-59-09-1.jpg' %}" alt="InclusiFit underwear product shot, style 3">
+      </div> 
+
+      <div class="product-cta"> 
+        <h3>InclusiFit Gender-Inclusive Underwear</h3>
+        <p>KSh 500.00</p>
+        <button aria-label="Shop now for InclusiFit Gender-Inclusive Underwear">Shop Now</button>
+      </div>
+
+      <div class="value-propositions"> 
+        <div class="value-prop">
+          <h1>01 Join the InclusiFit Movement</h1>
+          <p>At Inclusifit, we are committed to ensuring that our gender-inclusive underwear meets the needs of all individuals, including the intersex community. Celebrate individuality with us.</p>
+        </div>
+        <div class="value-prop">
+          <h1>02 Embrace Diversity, Embrace Comfort!</h1>
+          <p>By offering options that cater to a variety of body types and preferences, InclusiFit creates a more inclusive and comfortable experience for everyone.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="testimonials">
+    <div class="testimonials-top">
+      <h3>Testimonials</h3>
+      <h1>Discover Why Our Happy Clients Love InclusiFit!</h1>
+      <p>Intersex individuals often face discrimination and misunderstanding. At InclusiFit, we support intersex rights and visibility for a more inclusive society.</p>
+    </div>
+    <div class="testimonials-bottom">
+      <div class="partner-logos">
+        <img src="{% static 'images/Jinsiangu.png' %}" alt="Jinsiangu organization logo">
+        <img src="{% static 'images/Logo-1.png' %}" alt="Partner organization logo">
+        <img src="{% static 'images/IMG_0242-removebg-preview.png' %}" alt="Another partner organization logo">
+      </div>
+    </div>
+  </section>
+  
+
+  <!-- News -->
+  <section class="news">
+    <h2>Latest News and Events</h2>
+    <div class="news-headline">
+      <h3>Area Of Expertise!</h3>
+      <section class="news-expertise">
+        <div class="accordion">
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Gender Inclusivity</span>
+              <span class="arrow">&#8250;</span>
+            </div>
+            <div class="accordion-content">
+              <p>Details about Gender Inclusivity programs, workshops, or services.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Apparel Design</span>
+              <span class="arrow">&#8250;</span>
+            </div>
+            <div class="accordion-content">
+              <p>Details about Apparel Design initiatives and inclusivity-focused products.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Sensitivity and Inclusivity Training</span>
+              <span class="arrow">&#8250;</span>
+            </div>
+            <div class="accordion-content">
+              <p>Details about Sensitivity and Inclusivity Training programs.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Customer Support and Advocacy</span>
+              <span class="arrow">&#8250;</span>
+            </div>
+            <div class="accordion-content">
+              <p>Details about Customer Support and Advocacy services.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Product Development and Innovation</span>
+              <span class="arrow">&#8250;</span>
+            </div>
+            <div class="accordion-content">
+              <p>Details about Product Development and Innovation projects.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">
+              <span>Community Engagement and Outreach</span>
+              <span class="arrow">&#8250;</span>
+            </div>
+            <div class="accordion-content">
+              <p>Details about Community Engagement and Outreach programs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="news-article"> 
+      <img src="{% static 'images/PHOTO-2024-07-02-20-47-43.jpg' %}" alt="News article image: InclusiFit team at an event">
+      <p>InclusiFit Unveils Gender-Inclusive Underwear Collection: Embracing Diversity, Empowering All! <br>July 1, 2024</p>
+      <button aria-label="Read more about our new collection">Learn More</button>
+    </div>
+    <div class="news-image"> 
+      <img src="{% static 'images/PHOTO-2024-07-02-20-51-46-600x400.jpg' %}" alt="InclusiFit product displayed in a setting">
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact-section">
+    <img src="{% static 'images/sword-lily-blossom-bloom-8765777.jpg' %}" alt="A close-up of a purple and yellow iris flower" class="background-image">
+    <div class="overlay"></div>
+    <div class="content">
+        <p class="contact-label">Contact Me</p>
+        <h2>Consultations Are Free!</h2>
+        <p class="description">
+            Feel free to reach out to us for a consultation, where we offer complimentary guidance and support. At Inclusifit, we believe in fostering open communication and providing assistance to individuals seeking to embrace a positive, healthy journey towards comfort and inclusivity. Your journey starts here—contact us today.
+        </p>
+        <button class="cta-button" aria-label="Get started with a free consultation">Let's Get Started</button>
+    </div>
+</section>
+
+  <!-- Footer -->
+  <footer class="inclusifit-footer">
+    <div class="footer-top">
+      <div class="footer-nav">
+        <a href="#" class="nav-item">Home</a>
+        <a href="#" class="nav-item">Events</a>
+        <a href="#" class="nav-item">Contact</a>
+      </div>
+      <div class="footer-mission">
+        <p>
+          INCLUSIFIT is a registered trademark, symbolizing our dedication to fostering inclusivity and empowerment in all our endeavors.
+        </p>
+      </div>
+      <div class="footer-social">
+        <a href="#" class="social-icon">
+          <img src="instagram-icon.png" alt="">
+          <span>Instagram</span>
+        </a>
+        <a href="#" class="social-icon">
+          <img src="pinterest-icon.png" alt="">
+          <span>Pinterest</span>
+        </a>
+        <a href="#" class="social-icon">
+          <img src="email-icon.png" alt="">
+          <span>E-Mail</span>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+      </div>
+      <div class="footer-copyright">
+        <p>&copy; 2025 INCLUSIFIT. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Terms & Conditions</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
