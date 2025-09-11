@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop',
     'payments',
+    'contact',
 ]
 
 MIDDLEWARE = [
@@ -99,6 +100,17 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+from decouple import config
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ndungupinchez333@gmail.com'   # your email
+EMAIL_HOST_PASSWORD = 'fubg elha wjdt zkay'  # app password, not your normal Gmail password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
 
 
 # Internationalization

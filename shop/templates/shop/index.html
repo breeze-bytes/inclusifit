@@ -51,7 +51,8 @@
         <li><a href="{% url 'home' %}">Home</a></li>
        <li><a href="#">About</a></li>
         <li><a href="{% url 'shop:shop' %}">Shop</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+
       </ul>
       
     </nav>
@@ -225,7 +226,11 @@
         <p class="description">
             Feel free to reach out to us for a consultation, where we offer complimentary guidance and support. At Inclusifit, we believe in fostering open communication and providing assistance to individuals seeking to embrace a positive, healthy journey towards comfort and inclusivity. Your journey starts here—contact us today.
         </p>
-        <button class="cta-button" aria-label="Get started with a free consultation">Let's Get Started</button>
+        <button class="cta-button"
+        aria-label="Get started with a free consultation"
+        onclick="window.location.href='{% url 'contact' %}'">
+  Let's Get Started
+</button>
     </div>
 </section>
 
