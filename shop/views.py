@@ -119,5 +119,9 @@ def checkout_view(request, product_id):
     size = product.sizes.get(id=size_id)
     return render(request, "shop/checkout.html", {"product": product, "size": size})
 
+from django.shortcuts import render
+
+def about(request):
+    return render(request, 'about.html')
 
 

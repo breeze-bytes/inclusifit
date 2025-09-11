@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About Us - Inclusifit Shop</title>
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+</head>
+<body>
+    <div class="about-container">
+        <h1>About Inclusifit Shop</h1>
+        <p>
+            Inclusifit Shop is all about simplicity and inclusivity.  
+            We focus on one essential clothing product — a versatile 
+            and comfortable <strong>Inclusifit T-Shirt</strong> available 
+            in different sizes to fit every body type.
+        </p>
+
+        <h2>Why Just One Product?</h2>
+        <p>
+            We believe in quality over quantity. Our Inclusifit T-Shirt 
+            is carefully designed, made from premium fabric, and tailored 
+            to ensure everyone can enjoy the same great comfort and style — 
+            no matter the size.
+        </p>
+
+        <h2>Our Mission</h2>
+        <p>
+            To provide a single, universal clothing solution that promotes 
+            body positivity, inclusivity, and comfort for all.
+        </p>
+
+        <h2>Available Sizes</h2>
+        <p>
+            Our product comes in multiple sizes — from XS to XXL — ensuring 
+            everyone can find the perfect fit.
+        </p>
+
+        <a href="{% url 'contact' %}" class="cta-button">Contact Us</a>
+    </div>
+</body>
+</html>
