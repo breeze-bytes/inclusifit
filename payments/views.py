@@ -1,111 +1,150 @@
-import requests, base64, datetime
-from django.http import JsonResponse
+import base64
+import requests
+import datetime
+import json
+from django.conf import settings
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from shop.models import Product, ProductSize, Order
+from django.shortcuts import render, redirect
+from .models import MpesaTransaction
 
-# Replace with your own Daraja credentials
-BUSINESS_SHORTCODE = "174379"
-PASSKEY = "YOUR_PASSKEY"
-CONSUMER_KEY = "YOUR_CONSUMER_KEY"
-CONSUMER_SECRET = "YOUR_CONSUMER_SECRET"
-CALLBACK_URL = "https://yourdomain.com/payments/callback/"
+# ----------------- Helpers -----------------
+def get_mpesa_token():
+    """Get Daraja OAuth token (sandbox)."""
+    consumer_key = settings.DAR_AJA_CONSUMER_KEY
+    consumer_secret = settings.DAR_AJA_CONSUMER_SECRET
+    auth_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
+    resp = requests.get(auth_url, auth=(consumer_key, consumer_secret))
+    resp.raise_for_status()
+    return resp.json().get("access_token")
 
-def generate_token():
-    url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
-    response = requests.get(url, auth=(CONSUMER_KEY, CONSUMER_SECRET))
-    return response.json().get("access_token")
 
-@csrf_exempt
-def lipa_na_mpesa_online(request):
+def lipa_password(timestamp):
+    """Generate base64 encoded password for STK Push."""
+    data = settings.MPESA_SHORTCODE + settings.MPESA_PASSKEY + timestamp
+    return base64.b64encode(data.encode('utf-8')).decode('utf-8')
+
+
+# ----------------- Views -----------------
+def choose_method(request):
+    cart = request.session.get("cart", {})
+    total = sum(item["price"] * item["quantity"] for item in cart.values())
+    return render(request, "payments/method.html", {"total": total})
+
+
+
+def mpesa_stk_push(request):
+    """Render STK Push form or initiate payment via POST."""
     if request.method == "POST":
-        product_id = request.POST.get("product_id")
-        size_id = request.POST.get("size_id")
-        customer_name = request.POST.get("name")
         phone = request.POST.get("phone")
+        amount = request.POST.get("amount")
+        account_ref = request.POST.get("account_reference", "InclusiFitOrder")
 
-        # get product & size
-        product = Product.objects.get(id=product_id)
-        size = ProductSize.objects.get(id=size_id)
+        if not phone or not amount:
+            return JsonResponse({"error": "Phone and amount required"}, status=400)
 
-        # create order (pending)
-        order = Order.objects.create(
-            customer_name=customer_name,
-            phone=phone,
-            product=product,
-            size=size,
-            amount=product.price,
-            status="pending",
-        )
+        try:
+            token = get_mpesa_token()
+        except Exception as e:
+            return JsonResponse({"error": "Failed to get token", "details": str(e)}, status=500)
 
-        # Safaricom API
-        token = generate_token()
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        password = base64.b64encode(
-            (BUSINESS_SHORTCODE + PASSKEY + timestamp).encode("utf-8")
-        ).decode("utf-8")
+        password = lipa_password(timestamp)
 
         payload = {
-            "BusinessShortCode": BUSINESS_SHORTCODE,
+            "BusinessShortCode": settings.MPESA_SHORTCODE,
             "Password": password,
             "Timestamp": timestamp,
             "TransactionType": "CustomerPayBillOnline",
-            "Amount": str(product.price),
+            "Amount": int(float(amount)),
             "PartyA": phone,
-            "PartyB": BUSINESS_SHORTCODE,
+            "PartyB": settings.MPESA_SHORTCODE,
             "PhoneNumber": phone,
-            "CallBackURL": CALLBACK_URL,
-            "AccountReference": f"Order{order.id}",
-            "TransactionDesc": f"Payment for {product.name} ({size.size})",
+            "CallBackURL": settings.MPESA_CALLBACK_URL,
+            "AccountReference": account_ref,
+            "TransactionDesc": "Payment for InclusiFit order"
         }
 
-        headers = {"Authorization": f"Bearer {token}"}
-        response = requests.post(
-            "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-            json=payload,
-            headers=headers,
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+
+        stk_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+        response = requests.post(stk_url, json=payload, headers=headers)
+        data = response.json()
+
+        if response.status_code not in (200, 201):
+            return JsonResponse({"error": "Daraja error", "details": data}, status=500)
+
+        # Save transaction
+        MpesaTransaction.objects.create(
+            merchant_request_id=data.get("MerchantRequestID"),
+            checkout_request_id=data.get("CheckoutRequestID"),
+            phone=phone,
+            amount=float(amount),
+            raw_callback=data
         )
-        resp_data = response.json()
 
-        # store CheckoutRequestID in the order
-        checkout_id = resp_data.get("CheckoutRequestID")
-        if checkout_id:
-            order.checkout_request_id = checkout_id
-            order.save()
+        return JsonResponse({"message": "STK Push initiated", "daraja_response": data})
 
-        return JsonResponse(resp_data)
+    else:
+        # GET -> render form
+        total_amount = request.GET.get("amount", "")
+        return render(request, "payments/mpesa.html", {"total_amount": total_amount})
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
 
 @csrf_exempt
 def mpesa_callback(request):
-    import json
-    data = request.body.decode("utf-8")
-    json_data = json.loads(data)
-
-    callback = json_data["Body"]["stkCallback"]
-    checkout_id = callback["CheckoutRequestID"]
-    result_code = callback["ResultCode"]
-
-    # Find the order by checkout_id
+    """Handle asynchronous STK Push result from Daraja."""
     try:
-        order = Order.objects.get(checkout_request_id=checkout_id)
-    except Order.DoesNotExist:
-        return JsonResponse({"error": "Order not found"}, status=404)
+        body = json.loads(request.body.decode("utf-8"))
+    except Exception:
+        return HttpResponse(status=400)
 
-    if result_code == 0:
-        # Payment success
-        metadata = callback["CallbackMetadata"]["Item"]
-        transaction_code = None
-        for item in metadata:
-            if item["Name"] == "MpesaReceiptNumber":
-                transaction_code = item["Value"]
+    stk_callback = body.get("Body", {}).get("stkCallback", body)
+    checkout_request_id = stk_callback.get("CheckoutRequestID")
+    merchant_request_id = stk_callback.get("MerchantRequestID")
+    result_code = stk_callback.get("ResultCode")
+    result_desc = stk_callback.get("ResultDesc")
 
-        order.status = "paid"
-        order.transaction_code = transaction_code
-        order.save()
-    else:
-        # Payment failed/cancelled
-        order.status = "failed"
-        order.save()
+    # Extract metadata
+    callback_items = stk_callback.get("CallbackMetadata", {}).get("Item", [])
+    phone, amount = None, None
+    for item in callback_items:
+        if item.get("Name") == "Amount":
+            amount = item.get("Value")
+        if item.get("Name") == "PhoneNumber":
+            phone = item.get("Value")
 
-    return JsonResponse({"status": "ok"})
+    tx, _ = MpesaTransaction.objects.get_or_create(
+        checkout_request_id=checkout_request_id,
+        defaults={
+            "merchant_request_id": merchant_request_id,
+            "phone": phone,
+            "amount": amount,
+            "result_code": result_code,
+            "result_desc": result_desc,
+            "raw_callback": body
+        }
+    )
+
+    # Update if exists
+    tx.result_code = result_code
+    tx.result_desc = result_desc
+    if phone: tx.phone = phone
+    if amount: tx.amount = amount
+    tx.raw_callback = body
+    tx.save()
+
+    return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+
+def bank_payment(request):
+    """Render placeholder bank payment page."""
+    return render(request, "payments/bank.html")
+
+
+def paypal_payment(request):
+    """Render placeholder PayPal payment page."""
+    return render(request, "payments/paypal.html")

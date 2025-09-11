@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart - InclusiFit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <nav>
+      <a href="{% url 'home' %}" class="logo">InclusiFit</a>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'shop:shop' %}">Shop</a></li>
+        <li><a href="">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Cart Content -->
+  <main class="cart-container">
+    <h1>Your Cart</h1>
+
+    {% if cart_items %}
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart_items %}
+          <tr id="cart-item-{{ item.key }}">
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.size.size }}</td>
+            <td>KSh {{ item.product.price }}</td>
+            <td>
+              <div class="quantity-controls">
+                <button class="qty-btn" data-key="{{ item.key }}" data-action="decrement">-</button>
+                <input type="number" value="{{ item.quantity }}">
+                <button class="qty-btn" data-key="{{ item.key }}" data-action="increment">+</button>
+              </div>
+            </td>
+            <td class="subtotal">KSh {{ item.subtotal }}</td>
+            <td>
+              <button class="delete-btn" data-key="{{ item.key }}">🗑 Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+
+      <div class="cart-summary">
+        <h2>Total: KSh {{ total }}</h2>
+        <a href="{% url 'shop:shop' %}" class="btn">← Continue Shopping</a>
+        <a href="{% url 'payments:method' %}" class="btn btn-primary">Proceed to Checkout →</a>
+      </div>
+    {% else %}
+      <p>Your cart is empty.</p>
+      <a href="{% url 'shop' %}" class="btn">Start Shopping</a>
+    {% endif %}
+  </main>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      function updateCart(key, action) {
+        fetch("{% url 'shop:update_cart' 'dummy' %}".replace('dummy', key), {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: action }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (data.deleted) {
+              document.getElementById("cart-item-" + key).remove();
+            } else {
+              let row = document.getElementById("cart-item-" + key);
+              row.querySelector("input").value = data.quantity;
+              row.querySelector(".subtotal").textContent = "KSh " + data.subtotal;
+            }
+            document.querySelector(".cart-summary h2").textContent = "Total: KSh " + data.total;
+          }
+        });
+      }
+    
+      // Increment / Decrement
+      document.querySelectorAll(".qty-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+          updateCart(this.dataset.key, this.dataset.action);
+        });
+      });
+    
+      // Delete
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+          updateCart(this.dataset.key, "delete");
+        });
+      });
+    });
+    </script>
+    
+</body>
+</html>

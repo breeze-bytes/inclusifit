@@ -37,8 +37,7 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="home.css">
+  
 </head>
 
 <body>
@@ -50,10 +49,11 @@
       </a>
       <ul class="menu">
         <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Shop</a></li>
+       <li><a href="#">About</a></li>
+        <li><a href="{% url 'shop:shop' %}">Shop</a></li>
         <li><a href="#">Contact</a></li>
       </ul>
+      
     </nav>
   </header>
 

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay with M-Pesa - InclusiFit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/mpesa.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>M-Pesa Payment</h1>
+    <form method="POST" action="{% url 'payments:mpesa_stk' %}">
+      {% csrf_token %}
+      
+      <label for="phone">Phone Number (2547XXXXXXXX):</label>
+      <input type="text" name="phone" id="phone" placeholder="2547XXXXXXXX" required>
+
+      <label for="amount">Amount (KSh):</label>
+      <input type="number" name="amount" id="amount" value="{{ total_amount }}" required>
+
+
+      <label for="account_reference">Account Reference (optional):</label>
+      <input type="text" name="account_reference" id="account_reference" placeholder="InclusiFitOrder">
+
+      <button type="submit">Pay Now</button>
+
+      <p class="info">
+        Use sandbox phone numbers for testing. Example: <strong>254708374149</strong>.  
+        Your callback URL must be publicly reachable (ngrok recommended in dev).
+      </p>
+    </form>
+  </div>
+</body>
+</html>

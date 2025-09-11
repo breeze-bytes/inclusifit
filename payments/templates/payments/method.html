@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - InclusiFit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/payments.css' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <nav>
+      <a href="{% url 'home' %}" class="logo">InclusiFit</a>
+      <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'shop:shop' %}">Shop</a></li>
+        <li><a href="{% url 'shop:cart' %}">🛒 Cart</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Checkout Options -->
+  <main class="checkout-container">
+    <h1>Choose Payment Method</h1>
+    <p>Please select how you would like to pay for your order.</p>
+
+    <div class="payment-options">
+      <a href="{% url 'payments:mpesa_stk' %}?amount={{ total }}" class="payment-card">
+        <img src="{% static 'images/mpesa.png' %}" alt="M-Pesa">
+        <h2>Pay with M-Pesa</h2>
+    </a>
+    
+  
+      <a href="{% url 'payments:bank' %}?amount={{ total }}" class="payment-card">
+          <img src="{% static 'images/bank.png' %}" alt="Bank">
+          <h2>Pay with Bank</h2>
+      </a>
+  
+      <a href="{% url 'payments:paypal' %}?amount={{ total }}" class="payment-card">
+          <img src="{% static 'images/paypal.png' %}" alt="PayPal">
+          <h2>Pay with PayPal</h2>
+      </a>
+  </div>
+  
+  </main>
+</body>
+</html>

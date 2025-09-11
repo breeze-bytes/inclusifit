@@ -125,3 +125,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Payments / Daraja credentials (put in environment variables in production)
+DAR_AJA_CONSUMER_KEY = "zIIEidnrEGPWM5eAMY5t8N8Ba3ENANhQ0GHgG1T8GbXV28iE"
+DAR_AJA_CONSUMER_SECRET = "MPM6JAZtv9bR52nxReCGCRo7UMJQIMVD2CuFi0KfAq1Cp5uJrxWtqMAX4mwkT6p4"
+
+# Lipa Na M-Pesa settings
+MPESA_SHORTCODE = "174379"                 # Example sandbox Shortcode (use the one from your dev app)
+MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"            # Provided in Daraja dashboard for Lipa Na M-Pesa
+MPESA_CALLBACK_URL = "https://f9a5a7973249.ngrok-free.app/payments/mpesa/callback/"  # must be reachable by Safaricom (ngrok in dev)
+
