@@ -1,41 +1,41 @@
-from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Product, ProductSize
 import json
 from django.http import JsonResponse
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    cart = request.session.get("cart", {})
-    cart_item_count = sum(item["quantity"] for item in cart.values())
-
-    return render(request, "shop/shop.html", {
-        "product": product,
-        "cart_item_count": cart_item_count,
-    })
 
 
+
+
+@csrf_exempt
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    size_id = request.POST.get("size")  # match your HTML form
-    quantity = int(request.POST.get("quantity", 1))
+    if request.method == "POST":
+        product = get_object_or_404(Product, id=product_id)
+        data = json.loads(request.body)
+        size_id = data.get("size")
+        quantity = int(data.get("quantity", 1))
 
-    cart = request.session.get("cart", {})
-    key = f"{product_id}_{size_id}"
+        cart = request.session.get("cart", {})
+        key = f"{product_id}_{size_id}"
 
-    if key in cart:
-        cart[key]["quantity"] += quantity
-    else:
-        cart[key] = {
-            "product_id": product_id,
-            "size_id": size_id,
-            "quantity": quantity,
-            "price": float(product.price),
-            "name": product.name,
-        }
+        if key in cart:
+            cart[key]["quantity"] += quantity
+        else:
+            cart[key] = {
+                "product_id": product_id,
+                "size_id": size_id,
+                "quantity": quantity,
+                "price": float(product.price),
+                "name": product.name,
+            }
 
-    request.session["cart"] = cart
-    return redirect("shop:cart")
+        request.session["cart"] = cart
+        cart_item_count = sum(item["quantity"] for item in cart.values())
+
+        return JsonResponse({"success": True, "cart_item_count": cart_item_count})
+    return JsonResponse({"success": False}, status=400)
 
 
 def cart_view(request):
@@ -110,8 +110,18 @@ def home(request):
 
 def shop_view(request):
     product = get_object_or_404(Product, name="Underwear")  # single product
-    return render(request, "shop/shop.html", {"product": product})
-def checkout_view(request, product_id):
+    cart = request.session.get("cart", {})
+    cart_item_count = sum(item["quantity"] for item in cart.values())
+
+    # wrap single product in a list to match template
+    products = [product]
+
+    return render(request, "shop/shop.html", {
+        "products": products,
+        "cart_item_count": cart_item_count,
+    })
+
+
     product = get_object_or_404(Product, id=product_id)
     size_id = request.GET.get("size")  # get from ?size=2
     if not size_id:

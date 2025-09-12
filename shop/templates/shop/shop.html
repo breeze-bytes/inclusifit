@@ -17,7 +17,7 @@
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="{% url 'shop:shop' %}">Shop</a></li>
         <li><a href="#">Contact</a></li>
-        <li><a href="{% url 'shop:cart' %}">🛒 Cart ({{ cart_item_count }})</a></li>
+        <li><a href="{% url 'shop:cart' %}" id="cart-link">🛒 Cart ({{ cart_item_count }})</a></li>
       </ul>
     </nav>
   </header>
@@ -48,9 +48,21 @@
             <h3>{{ product.name }}</h3>
             <p class="price">KSh {{ product.price }}</p>
 
-            <a href="{% url 'shop:product_detail' product.id %}" class="btn">
-              View Details
-            </a>
+            <!-- Add-to-Cart AJAX Form -->
+            <form class="add-to-cart-ajax" data-product-id="{{ product.id }}">
+              {% csrf_token %}
+              <label for="size_{{ product.id }}">Size:</label>
+              <select name="size" id="size_{{ product.id }}" required>
+                {% for size in product.sizes.all %}
+                  <option value="{{ size.id }}">{{ size.size }} ({{ size.stock }} available)</option>
+                {% endfor %}
+              </select>
+
+              <label for="quantity_{{ product.id }}">Quantity:</label>
+              <input type="number" name="quantity" id="quantity_{{ product.id }}" value="1" min="1">
+
+              <button type="submit" class="btn-add">Add to Cart</button>
+            </form>
           </div>
         {% endfor %}
       </div>
@@ -58,5 +70,55 @@
       <p>No products available at the moment.</p>
     {% endif %}
   </main>
+
+  <!-- Popup Notification -->
+  <div id="cart-popup">Added to Cart!</div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 InclusiFit – Inclusive Fitness Gear for Everyone</p>
+  </footer>
+
+  <!-- AJAX Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const forms = document.querySelectorAll(".add-to-cart-ajax");
+      const popup = document.getElementById("cart-popup");
+      const cartLink = document.getElementById("cart-link");
+
+      forms.forEach(form => {
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+          const productId = form.dataset.productId;
+          const size = form.querySelector("select[name='size']").value;
+          const quantity = form.querySelector("input[name='quantity']").value;
+          const csrfToken = form.querySelector("[name=csrfmiddlewaretoken]").value;
+
+          fetch(`/shop/add-to-cart/${productId}/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ size, quantity })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if(data.success){
+              popup.textContent = `Added ${quantity} item(s) to Cart!`;
+              popup.style.display = "block";
+              setTimeout(() => popup.style.display = "none", 2000);
+
+              // update navbar count
+              if(cartLink && data.cart_item_count !== undefined){
+                cartLink.textContent = `🛒 Cart (${data.cart_item_count})`;
+              }
+            }
+          })
+          .catch(err => console.error(err));
+        });
+      });
+    });
+  </script>
 </body>
 </html>

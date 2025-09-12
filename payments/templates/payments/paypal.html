@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay with PayPal</title>
+  <link rel="stylesheet" href="{% static 'css/shop.css' %}">
+</head>
+<body>
+  <h1>Pay with PayPal</h1>
+
+  <p>Amount to pay: KSh {{ amount|floatformat:2 }}</p>
+
+  <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+    <input type="hidden" name="business" value="sb-vjvsh46116883@business.example.com">
+    <input type="hidden" name="cmd" value="_xclick">
+    <input type="hidden" name="item_name" value="InclusiFit Order">
+    <input type="hidden" name="amount" value="{{ amount|floatformat:2 }}">
+    <input type="hidden" name="currency_code" value="KES">
+    <input type="hidden" name="return" value="http://127.0.0.1:8000/payments/success/">
+    <input type="hidden" name="cancel_return" value="http://127.0.0.1:8000/payments/cancel/">
+
+    <button type="submit">Pay Now</button>
+  </form>
+</body>
+</html>

@@ -100,14 +100,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 from decouple import config
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ndungupinchez333@gmail.com'   # your email
-EMAIL_HOST_PASSWORD = 'fubg elha wjdt zkay'  # app password, not your normal Gmail password
+EMAIL_HOST_USER = 'njorogebonface002@gmail.com'   # your email
+EMAIL_HOST_PASSWORD = 'gbor skod rmjt lyrj '  # app password, not your normal Gmail password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
@@ -147,3 +148,8 @@ MPESA_SHORTCODE = "174379"                 # Example sandbox Shortcode (use the 
 MPESA_PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"            # Provided in Daraja dashboard for Lipa Na M-Pesa
 MPESA_CALLBACK_URL = "https://f9a5a7973249.ngrok-free.app/payments/mpesa/callback/"  # must be reachable by Safaricom (ngrok in dev)
 
+# settings.py
+
+PAYPAL_CLIENT_ID = "AfgdHppxXifpjh9MUvtJrRylSgnv0JufqG1XrI3rU1a2s32r6JkPPC9bWSTdsp1goJ_MzJ2PoPK-UXUA"
+PAYPAL_SECRET = "EHOsckDEf1eUtjRhhaiKmn8OOS4Pxiw9F5IFHMXXrGzUTs42pc67IwhR4sEBLd6wPtBeCIMCdUHBHQqo"
+PAYPAL_MODE = "sandbox"  # Change to "live" for production

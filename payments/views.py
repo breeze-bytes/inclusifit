@@ -7,6 +7,65 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
 from .models import MpesaTransaction
+from decimal import Decimal
+from shop.models import Product  # Optional if you want to update stock/order
+
+PAYPAL_OAUTH_API = "https://api-m.sandbox.paypal.com/v1/oauth2/token"
+PAYPAL_ORDER_API = "https://api-m.sandbox.paypal.com/v2/checkout/orders"
+
+def get_paypal_access_token():
+    """Get OAuth token from PayPal"""
+    response = requests.post(
+        PAYPAL_OAUTH_API,
+        auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_SECRET),
+        data={"grant_type": "client_credentials"}
+    )
+    response.raise_for_status()
+    return response.json()["access_token"]
+
+
+from django.shortcuts import render, redirect
+from django.conf import settings
+
+def paypal_payment(request):
+    # Get amount from GET or POST
+    amount = request.GET.get('amount') or request.POST.get('amount')
+    
+    if not amount:
+        amount = 0  # fallback if no amount provided
+
+    return render(request, 'payments/paypal.html', {
+        'amount': amount
+    })
+
+
+
+@csrf_exempt
+def paypal_capture(request):
+    """Capture completed PayPal order"""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        order_id = data.get("orderID")
+        token = get_paypal_access_token()
+
+        # Capture the order
+        response = requests.post(
+            f"{PAYPAL_ORDER_API}/{order_id}/capture",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {token}"
+            }
+        )
+        result = response.json()
+        if response.status_code == 201:
+            # Here you can update your cart/order
+            # e.g., mark items as purchased, reduce stock, etc.
+            return JsonResponse({"status": "success", "details": result})
+        else:
+            return JsonResponse({"status": "error", "details": result})
+
+    return JsonResponse({"status": "invalid method"}, status=400)
+
 
 # ----------------- Helpers -----------------
 def get_mpesa_token():
@@ -145,6 +204,4 @@ def bank_payment(request):
     return render(request, "payments/bank.html")
 
 
-def paypal_payment(request):
-    """Render placeholder PayPal payment page."""
-    return render(request, "payments/paypal.html")
+

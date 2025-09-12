@@ -38,7 +38,7 @@
           <h2>Pay with Bank</h2>
       </a>
   
-      <a href="{% url 'payments:paypal' %}?amount={{ total }}" class="payment-card">
+      <a href="{% url 'payments:paypal_payment' %}?amount={{ total }}" class="payment-card">
           <img src="{% static 'images/paypal.png' %}" alt="PayPal">
           <h2>Pay with PayPal</h2>
       </a>
