@@ -1,0 +1,16 @@
+# Python cache and compiled files
+__pycache__/
+*.pyc
+
+# SQLite DB
+*.sqlite3
+db.sqlite3
+
+# VSCode / editor
+.vscode/
+.idea/
+
+# Byte-compiled / packaging
+*.egg-info/
+dist/
+build/
