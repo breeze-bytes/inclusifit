@@ -27,6 +27,7 @@ urlpatterns = [
      path('shop/', include('shop.urls')), 
     path("payments/", include("payments.urls")),
     path('contact/', include('contact.urls')),
+    path('about/', views.about, name='about'), 
 
 ]
 

@@ -81,3 +81,21 @@ form button:hover {
     border-radius: 10px;
     margin-bottom: 15px;
 }
+#django-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.alert {
+  padding: 12px 20px;
+  background: #28a745;
+  color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-size: 14px;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
